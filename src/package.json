@@ -1,0 +1,51 @@
+{
+  "name": "@altabsrl/nativescript-hook-versioning-pnpm",
+  "version": "1.0.0",
+  "description": "NativeScript build hook that updates Android/iOS app version metadata with pnpm-compatible installation.",
+  "nativescript": {
+    "platforms": {
+      "android": "8.0.0",
+      "ios": "8.0.0"
+    },
+    "hooks": [
+      {
+        "type": "after-prepare",
+        "script": "after-prepare.js",
+        "inject": true
+      }
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Altab-S-R-L/nativescript-hook-versionning-pnpm.git"
+  },
+  "scripts": {
+    "postinstall": "node scripts/install-hook.js",
+    "preuninstall": "node scripts/uninstall-hook.js"
+  },
+  "keywords": [
+    "NativeScript",
+    "JavaScript",
+    "Android",
+    "iOS",
+    "Versioning",
+    "CICD",
+    "Hook"
+  ],
+  "author": {
+    "name": "Dorian Goffette",
+    "email": "dorian@altab.be"
+  },
+  "bugs": {
+    "url": "https://github.com/Altab-S-R-L/nativescript-hook-versionning-pnpm/issues"
+  },
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/Altab-S-R-L/nativescript-hook-versionning-pnpm",
+  "devDependencies": {},
+  "dependencies": {
+    "androidmanifest": "^2.0.0",
+    "fs-extra": "^9.0.1",
+    "mkdirp": "^1.0.4",
+    "plist": "^3.1.0"
+  }
+}
