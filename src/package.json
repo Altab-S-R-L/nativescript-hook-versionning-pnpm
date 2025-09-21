@@ -19,10 +19,7 @@
     "type": "git",
     "url": "https://github.com/Altab-S-R-L/nativescript-hook-versionning-pnpm.git"
   },
-  "scripts": {
-    "postinstall": "node scripts/install-hook.js",
-    "preuninstall": "node scripts/uninstall-hook.js"
-  },
+  "scripts": {},
   "keywords": [
     "NativeScript",
     "JavaScript",
