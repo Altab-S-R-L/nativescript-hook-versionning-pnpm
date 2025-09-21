@@ -1,6 +1,6 @@
 {
   "name": "@altabsrl/nativescript-hook-versioning-pnpm",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "NativeScript build hook that updates Android/iOS app version metadata with pnpm-compatible installation.",
   "nativescript": {
     "platforms": {
