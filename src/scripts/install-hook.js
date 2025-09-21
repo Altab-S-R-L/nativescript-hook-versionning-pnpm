@@ -1,7 +1,6 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const mkdirp = require('mkdirp');
 
 const pkgDir = path.resolve(__dirname, '..');
 const pkg = require(path.join(pkgDir, 'package.json'));
@@ -90,7 +89,7 @@ function install() {
 
   hooks.forEach((hook) => {
     const hookDir = path.join(projectDir, 'hooks', hook.type);
-    mkdirp.sync(hookDir);
+    fs.mkdirSync(hookDir, { recursive: true });
 
     const hookFileName = generateHookName(pkg.name, hook);
     const hookPath = path.join(hookDir, hookFileName);
