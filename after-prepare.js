@@ -31,27 +31,44 @@ module.exports = function (
     hookConfig.versionCode.content;
   let versionCodeContent = hookConfig.versionCode.content;
   let versionCodeEnvVar = null;
+  let versionCodeFallbackUsed = false;
 
   if (versionCodeEnabled) {
+    const fallbackRaw = hookConfig.versionCode.default;
+    const fallbackValue =
+      fallbackRaw !== undefined && fallbackRaw !== null
+        ? parseInt(fallbackRaw, 10)
+        : 30000;
+
     if (versionCodeContent.includes("+")) {
       const splitted = hookConfig.versionCode.content.split("+");
       versionCodeEnvVar = splitted[0];
+      const offset = parseInt(splitted[1], 10) || 0;
 
-      if (!process.env[versionCodeEnvVar]) {
-        versionCodeEnabled = false;
+      if (process.env[versionCodeEnvVar]) {
+        const base = parseInt(process.env[versionCodeEnvVar], 10);
+        versionCodeContent = (Number.isNaN(base) ? fallbackValue : base) + offset;
+        versionCodeFallbackUsed = Number.isNaN(base);
       } else {
-        versionCodeContent =
-          parseInt(process.env[versionCodeEnvVar], 10) + parseInt(splitted[1], 10);
+        versionCodeContent = fallbackValue + offset;
+        versionCodeFallbackUsed = true;
+        $logger.warn(
+          `[@altabsrl/nativescript-hook-versioning-pnpm] env ${versionCodeEnvVar} not found, falling back to ${versionCodeContent}`
+        );
       }
     } else if (process.env[versionCodeContent]) {
       versionCodeEnvVar = versionCodeContent;
-      versionCodeContent = process.env[versionCodeContent];
+      const base = parseInt(process.env[versionCodeContent], 10);
+      versionCodeContent = Number.isNaN(base) ? fallbackValue : base;
+      versionCodeFallbackUsed = Number.isNaN(base);
     } else {
-      versionCodeEnabled = false;
+      versionCodeContent = fallbackValue;
+      versionCodeFallbackUsed = true;
+      $logger.warn(
+        `[@altabsrl/nativescript-hook-versioning-pnpm] env ${versionCodeContent} not found, falling back to ${versionCodeContent}`
+      );
     }
-  }
 
-  if (versionCodeEnabled) {
     const parsedCode = parseInt(versionCodeContent, 10);
     if (Number.isNaN(parsedCode)) {
       versionCodeEnabled = false;
@@ -71,11 +88,13 @@ module.exports = function (
 
     if (hookConfig.versionName || versionCodeEnabled) {
       const envInfo = versionCodeEnvVar
-        ? `${versionCodeEnvVar}=${process.env[versionCodeEnvVar] || 'undefined'}`
-        : 'env unused';
+        ? `${versionCodeEnvVar}=${process.env[versionCodeEnvVar] || "undefined"}`
+        : versionCodeFallbackUsed
+        ? "fallback"
+        : "env unused";
       $logger.info(
         `[nativescript-hook-versioning-pnpm] Android manifest -> versionName=${nsConfig.version}, versionCode=${
-          versionCodeEnabled ? versionCodeContent : 'disabled'
+          versionCodeEnabled ? versionCodeContent : "disabled"
         } (${envInfo})`
       );
     }
@@ -95,10 +114,15 @@ module.exports = function (
     );
 
     if (hookConfig.versionName || versionCodeEnabled) {
+      const envInfo = versionCodeEnvVar
+        ? `${versionCodeEnvVar}=${process.env[versionCodeEnvVar] || "undefined"}`
+        : versionCodeFallbackUsed
+        ? "fallback"
+        : "env unused";
       $logger.info(
         `[nativescript-hook-versioning-pnpm] iOS Info.plist -> versionName=${nsConfig.version}, versionCode=${
-          versionCodeEnabled ? versionCodeContent : 'disabled'
-        }`
+          versionCodeEnabled ? versionCodeContent : "disabled"
+        } (${envInfo})`
       );
     }
 
